@@ -1,0 +1,16 @@
+{
+  "name": "local-timesheet-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Supabase-backed project timesheet tracking application",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "dotenv": "^17.2.2"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "start:netlify": "netlify dev",
+    "migrate": "node supabase/migrate-sqlite.js",
+    "test": "node --check server.js && node --check public/app.js"
+  }
+}

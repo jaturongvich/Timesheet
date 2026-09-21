@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tempo · Timesheet workspace</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<aside class="sidebar"><div class="brand"><span class="brand-mark">T</span><span>Timesheet record</span></div><p class="eyebrow">WORKSPACE</p><nav id="nav"><button class="nav-item active" data-page="dashboard">◈ <span>Overview</span></button><button class="nav-item" data-page="projects">▦ <span>Projects</span></button><button class="nav-item" data-page="engineers">♙ <span>Resources</span></button><button class="nav-item" data-page="checkin">＋ <span>Check in</span></button><button class="nav-item" data-page="reports">▤ <span>Reports</span></button><button class="nav-item" data-page="holidays">◷ <span>Holidays</span></button></nav><div class="sidebar-foot"><span class="status-dot"></span> Supabase workspace<br><small>Authenticated cloud database</small></div></aside>
+<main><header><div><p class="eyebrow">TIMESHEET TRACKING</p><h1 id="page-title">Overview</h1></div><div class="header-actions"><span id="today"></span><button class="icon-btn" title="Refresh" id="refresh">↻</button></div></header><div id="app"></div></main>
+<div id="toast" class="toast"></div><script src="app.js"></script>
+</body></html>
