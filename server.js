@@ -201,9 +201,37 @@ async function entries(req, res, user) {
   return send(res, 404, { error: 'Not found' });
 }
 async function bootstrap() {
-  if (!process.env.INITIAL_ADMIN_USERNAME || !process.env.INITIAL_ADMIN_PASSWORD) return;
-  const { data } = await db.from('users').select('id').eq('username', process.env.INITIAL_ADMIN_USERNAME).maybeSingle();
-  if (!data) await db.from('users').insert({ id: id(), username: process.env.INITIAL_ADMIN_USERNAME, password_hash: await passwordHash(process.env.INITIAL_ADMIN_PASSWORD), role: 'admin' });
+  const username = process.env.INITIAL_ADMIN_USERNAME;
+  const password = process.env.INITIAL_ADMIN_PASSWORD;
+  if (!username || !password) {
+    throw new Error('Initial admin bootstrap is not configured: set INITIAL_ADMIN_USERNAME and INITIAL_ADMIN_PASSWORD.');
+  }
+  let lookup;
+  try {
+    lookup = await db.from('users').select('id').eq('username', username).maybeSingle();
+  } catch (error) {
+    throw new Error('Initial admin bootstrap could not query the Supabase users table.', { cause: error });
+  }
+  if (lookup.error) throw new Error('Initial admin bootstrap could not query the Supabase users table.', { cause: lookup.error });
+  if (lookup.data) return;
+  let passwordHashValue;
+  try {
+    passwordHashValue = await passwordHash(password);
+  } catch (error) {
+    throw new Error('Initial admin bootstrap could not prepare the admin credential.', { cause: error });
+  }
+  const inserted = await db.from('users').insert({ id: id(), username, password_hash: passwordHashValue, role: 'admin' });
+  if (!inserted.error) return;
+  // Another instance may have created the same user between lookup and insert.
+  let confirmed;
+  try {
+    confirmed = await db.from('users').select('id').eq('username', username).maybeSingle();
+  } catch (error) {
+    throw new Error('Initial admin bootstrap failed while confirming the admin user.', { cause: error });
+  }
+  if (confirmed.error || !confirmed.data) {
+    throw new Error('Initial admin bootstrap could not create the admin user.', { cause: inserted.error });
+  }
 }
 async function handleHttp(req, res) {
   const pathname = requestUrl(req).pathname;

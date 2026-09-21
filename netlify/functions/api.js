@@ -31,7 +31,7 @@ exports.handler = async function handler(event) {
     await api(req, res, pathname);
     return { statusCode: response.statusCode, headers: response.headers, body: response.body };
   } catch (error) {
-    console.error('Netlify API error:', error);
+    console.error('Netlify API error:', error && error.message ? error.message : 'Request failed.');
     return { statusCode: 500, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify({ error: 'Server error.' }) };
   }
 };
